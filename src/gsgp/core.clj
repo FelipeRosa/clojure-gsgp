@@ -21,6 +21,6 @@
 
 (defn teste
   []
-  (let [p (rand-program bool 3)
+  (let [p (rand-program bool 3 false)
         inputs [true false false]]
     (program->value p inputs)))

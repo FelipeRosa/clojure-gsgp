@@ -72,9 +72,10 @@
   (rand-nth (-> lang :functions vals)))
 
 (defn rand-program
-  [lang max-depth]
-  (if (zero? max-depth)
+  [lang max-depth full?]
+  (if (or (zero? max-depth)
+          (and (not full?) (<= 0.5 (rand))))
     ((-> (rand-terminal-generator lang) :generator-function))
     (let [f-gen (rand-function-generator lang)
-          children (vec (repeatedly (-> f-gen :node-arity) #(rand-program lang (dec max-depth))))]
+          children (vec (repeatedly (-> f-gen :node-arity) #(rand-program lang (dec max-depth) full?)))]
       (apply (-> f-gen :generator-function) children))))
