@@ -5,15 +5,15 @@
   (program->value [this program-inputs]))
 
 
-(defrecord Input [index]
+(defrecord Input [index size]
   ProgramNode
   (program->value [this program-inputs] (nth program-inputs (-> this :index))))
 
-(defrecord Constant [value]
+(defrecord Constant [value size]
   ProgramNode
   (program->value [this _] (-> this :value)))
 
-(defrecord FunCall [f f-args]
+(defrecord FunCall [f f-args size]
   ProgramNode
   (program->value [this program-inputs]
     (let [args-results (mapv #(program->value % program-inputs) (-> this :f-args))]
@@ -22,15 +22,15 @@
 
 (defn constant
   [value]
-  (->Constant value))
+  (->Constant value 1))
 
 (defn input
   [index]
-  (->Input index))
+  (->Input index 1))
 
 (defn funcall
   [f & f-args]
-  (->FunCall f (vec f-args)))
+  (->FunCall f (vec f-args) (+ 1 (reduce #(+ (:size %1) (:size %2)) f-args))))
 
 
 (defrecord ProgramNodeGenerator [name node-arity generator-function])
