@@ -8,19 +8,23 @@
    (var   (input (rand-int 2)))]
 
   [(plus  [e1 e2] (funcall + e1 e2))
-   (times [e1 e2] (funcall * e1 e2))])
+   (minus [e1 e2] (funcall - e1 e2))
+   (times [e1 e2] (funcall * e1 e2))]
 
-(deflang bool
-  [(const (constant (rand-nth [true false])))
-   (var   (input (rand-int 2)))]
+  (mutation [t]
+    [t1 (rand-program arith 2 false)
+     t2 (rand-program arith 2 false)
+     s  0.0001]
+    (plus t (times (constant s) (minus t1 t2))))
 
-  [(not [e1]    (funcall not e1))
-   (and [e1 e2] (funcall (macroexpand 'and) e1 e2))
-   (or  [e1 e2] (funcall (macroexpand 'or)  e1 e2))])
+  (crossover [t1 t2]
+    [a (rand)
+     b (- 1 a)]
+    (plus (times (constant a) t1) (times (constant b) t2))))
 
 
 (defn teste
   []
-  (let [p (rand-program bool 3 false)
-        inputs [true false false]]
+  (let [p (rand-program arith 3 false)
+        inputs [1 2 3]]
     (program->value p inputs)))
