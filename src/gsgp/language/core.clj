@@ -53,15 +53,35 @@
          (merge {(keyword (-> generator# :name)) generator#} generators#)))))
 
 
+(defrecord Language [terminals functions mutation crossover])
 
-(defrecord Language [terminals functions])
+
+(defmacro bind-lang-defs
+  [gdefs & bodies]
+  (if (empty? gdefs)
+    `(do ~@bodies)
+    (let [[name _ _ :as gdef] (first gdefs)
+          gdefs (rest gdefs)]
+      `(let [~name (:generator-function (parse-node-generator ~gdef))]
+        (bind-lang-defs ~gdefs ~@bodies)))))
+
+(defmacro parse-genetic-operator
+  [gdefs [_ op-args op-consts op-body]]
+  `(fn []
+    (let ~op-consts
+      (bind-lang-defs ~gdefs
+        (fn ~op-args ~op-body)))))
 
 (defmacro deflang
-  [name terminals functions]
-  `(let [terminals# (parse-node-generators ~terminals)
-         functions# (parse-node-generators ~functions)]
-    (def ~name
-      (->Language terminals# functions#))))
+  [name terminals functions mutation crossover]
+  `(do
+    (def ~name)
+    (let [terminals# (parse-node-generators ~terminals)
+          functions# (parse-node-generators ~functions)
+          mutation#  (parse-genetic-operator ~functions ~mutation)
+          crossover# (parse-genetic-operator ~functions ~crossover)]
+      (def ~name
+        (->Language terminals# functions# mutation# crossover#)))))
 
 (defn rand-terminal-generator
   [lang]
