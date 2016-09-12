@@ -4,4 +4,5 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :local-repo "local-m2"
+  :main gsgp.core
   :dependencies [[org.clojure/clojure "1.8.0"]])

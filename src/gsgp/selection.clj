@@ -3,6 +3,6 @@
 
 (defn tournament-selection
   [population tournament-size pressure-coefficient]
-  (let [participants (take tournament-size population)
+  (let [participants (take tournament-size (shuffle population))
         adjusted-fitness (fn [i] (- (:fitness i) (* pressure-coefficient (:size (:program i)))))]
     (apply max-key adjusted-fitness participants)))
