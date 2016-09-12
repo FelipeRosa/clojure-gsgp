@@ -1,5 +1,6 @@
 (ns gsgp.world
-  (:require [gsgp.language.core :refer [constant program->value]]))
+  (:require [gsgp.language.core :refer [constant program->value]])
+  (:require [gsgp.statistics :refer [covariance variance]]))
 
 
 (defprotocol World
@@ -49,6 +50,14 @@
   [world]
   (apply max-key :fitness (-> world :population)))
 
+(defn world-average-fitness
+  [world]
+  (/ (reduce + (mapv :fitness (:population world))) (count (:population world))))
+
+(defn world-average-program-size
+  [world]
+  (/ (reduce + (mapv #(:size (:program %)) (:population world))) (count (:population world))))
+
 
 (defrecord SeqWorld
   [population
@@ -67,11 +76,13 @@
           {selection :selection-function
            population :population} this
 
-          p-coefficient 0.001
+          program-sizes     (mapv #(:size (:program %)) population)
+          program-fitnesses (mapv :fitness population)
+          p-coefficient     (/ (covariance program-sizes program-fitnesses) (variance program-sizes))
 
           select-individual #(selection population p-coefficient)
 
-          p-size (count population)
+          p-size  (count population)
           m-count (* m-rate p-size)
           c-count (* c-rate p-size)
           s-count (- p-size m-count c-count)
