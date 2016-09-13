@@ -6,7 +6,7 @@
   (let [n (count xs)
         mean-x (/ (reduce + xs) n)
         mean-y (/ (reduce + ys) n)]
-    (/ (reduce + (doall (map #(* (- %1 mean-x) (- %2 mean-y)) xs ys))) n)))
+    (/ (reduce + (mapv #(* (- %1 mean-x) (- %2 mean-y)) xs ys)) n)))
 
 (defn variance
   [xs]
