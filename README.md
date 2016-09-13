@@ -1,3 +1,3 @@
 # Geometric Semantic Genetic Programming Library
 
-TODO
+I'm yet to write this README. Checkout the [wiki](https://github.com/FelipeRosa/clojure-gsgp/wiki) meanwhile.
