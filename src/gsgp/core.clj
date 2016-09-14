@@ -44,7 +44,7 @@
                          (tournament-selection population 5 c))
 
           initial-population (vec
-                              (repeatedly 1000
+                              (repeatedly 100
                                 (fn []
                                   (let [prog (rand-program arith 2 false)
                                         phenotype (mapv #(program->value prog %) training-input)
@@ -57,7 +57,13 @@
                             training-input
                             {:mutation-rate  0.2
                              :crossover-rate 0.5})
-          last-world (evolve-while world (fn [world gen-n] (let [fit (:fitness (world-best-individual world))] (println gen-n fit) (<= gen-n 5))))
+          last-world (last
+                       (take 5
+                         (take-while #(do
+                                       (println (:fitness (world-best-individual %)))
+                                       true)
+                           (evolve-world world))))
+
           best (world-best-individual world)
 
           prediction (mapv #(program->value (:program best) %) test-input)]
