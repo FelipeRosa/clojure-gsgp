@@ -11,43 +11,41 @@
 (defrecord Individual [program phenotype fitness])
 
 
+(defn world-genetic-operation
+  "Returns a individual that results from applying the genetic operation to some parent individuals"
+  [world operation & individuals]
+  (let [{input-set        :input-set
+         fitness-function :fitness-function} world
+
+        operator-f (-> world :language operation)
+        operator   (operator-f)
+
+        i-phenotypes (mapv :phenotype individuals)
+        i-programs   (mapv :program   individuals)
+
+        j-program   (apply operator i-programs)
+        j-phenotype (mapv
+                      (fn [i-phenotype inputs]
+                        (program->value (apply operator i-phenotype) inputs))
+                      (mapv
+                        (fn [i-phenotype]
+                          (mapv constant i-phenotype))
+                        (apply mapv vector i-phenotypes))
+                      input-set)
+        j-fitness   (fitness-function j-phenotype)]
+    (->Individual j-program j-phenotype j-fitness)))
+
 (defn world-mutation
   "Returns the mutation of an individual inside a world"
   [world i]
-  (let [{mutation-f :mutation} (:language world)
-        {input-set        :input-set
-         fitness-function :fitness-function} world
-
-        {i-program :program
-         i-phenotype :phenotype} i
-
-        i-mut (mutation-f)
-
-        i1-program (i-mut i-program)
-        i1-phenotype (mapv #(program->value (i-mut (constant %1)) %2) i-phenotype input-set)
-        i1-fitness (fitness-function i1-phenotype)]
-    (->Individual i1-program i1-phenotype i1-fitness)))
+  (world-genetic-operation world :mutation i))
 
 
 (defn world-crossover
   "Returns the crossover of two individuals inside a world"
   [world i1 i2]
-  (let [{crossover-f :crossover} (:language world)
-        {input-set        :input-set
-         fitness-function :fitness-function} world
+  (world-genetic-operation world :crossover i1 i2))
 
-        {i1-program   :program
-         i1-phenotype :phenotype} i1
-
-        {i2-program   :program
-         i2-phenotype :phenotype} i2
-
-        i-cross (crossover-f)
-
-        i-program (i-cross i1-program i2-program)
-        i-phenotype (mapv #(program->value (i-cross (constant %1) (constant %2)) %3) i1-phenotype i2-phenotype input-set)
-        i-fitness (fitness-function i-phenotype)]
-    (->Individual i-program i-phenotype i-fitness)))
 
 (defn world-best-individual
   "Returns a world's individual which has the highest fitness"
