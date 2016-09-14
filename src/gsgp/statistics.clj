@@ -16,11 +16,11 @@
   (covariance xs xs))
 
 
-(defn diff
-  "Returns the sum of the absolute differences between
+(defn mae
+  "Returns the mean absolute error between
   a vector of predicted values and a vector of known outcomes"
   [predicted-values outcomes]
-  (reduce + (mapv #(Math/abs %) (mapv - predicted-values outcomes))))
+  (/ (reduce + (mapv #(Math/abs %) (mapv - predicted-values outcomes))) (count outcomes)))
 
 (defn mse
   "Return the mean squared error between

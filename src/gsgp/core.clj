@@ -39,7 +39,7 @@
           [test-output training-output] (split-at 156 ys)
 
           fitness-fn   (fn [phenotype]
-                         (/ 1 (+ 1 (rmse phenotype training-output))))
+                         (/ 1 (+ 1 (mae phenotype training-output))))
           selection-fn (fn [population c]
                          (tournament-selection population 5 c))
 
@@ -55,15 +55,15 @@
                             fitness-fn
                             selection-fn
                             training-input
-                            {:mutation-rate  0.4
-                             :crossover-rate 0.2})
-          last-world (evolve-while world (fn [world gen-n] (let [fit (:fitness (world-best-individual world))] (println gen-n fit) (<= gen-n 20))))
+                            {:mutation-rate  0.2
+                             :crossover-rate 0.5})
+          last-world (evolve-while world (fn [world gen-n] (let [fit (:fitness (world-best-individual world))] (println gen-n fit) (<= gen-n 5))))
           best (world-best-individual world)
 
           prediction (mapv #(program->value (:program best) %) test-input)]
 
       (println
-        (:size (:program best))
+        (:program best)
         (:size (:program (apply max-key #(:size (:program %)) (:population last-world))))
         (rmse test-output prediction))
       (save-txt prediction-filename (mapv vector (range) prediction))

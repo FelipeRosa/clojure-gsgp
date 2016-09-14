@@ -87,7 +87,7 @@
           c-count (* c-rate p-size)
           s-count (- p-size m-count c-count)
 
-          m-results (vec (repeatedly m-count #(world-mutation this (select-individual))))
+          m-results (mapv #(world-mutation this %) (take m-count (shuffle population)))
           c-results (vec (repeatedly c-count #(world-crossover this (select-individual) (select-individual))))
           s-results (vec (repeatedly s-count select-individual))]
       (update this :population
