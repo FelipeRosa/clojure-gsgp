@@ -5,10 +5,8 @@
 
 (defprotocol World
   "World protocol
-  next-generation generates a new world with the next generation of individuals
-  evolve-while computes generations until continue? is false"
-  (next-generation [this])
-  (evolve-while [this continue?]))
+  next-generation generates a new world with the next generation of individuals"
+  (next-generation [this]))
 
 (defrecord Individual [program phenotype fitness])
 
@@ -67,6 +65,11 @@
   (/ (reduce + (mapv #(:size (:program %)) (:population world))) (count (:population world))))
 
 
+(defn evolve-world
+  [world]
+  (iterate next-generation world))
+
+
 (defrecord SeqWorld
   [population
    language
@@ -100,12 +103,4 @@
           s-results (vec (repeatedly s-count select-individual))]
       (update this :population
         (constantly
-          (vec (concat m-results c-results s-results))))))
-
-  (evolve-while
-    [this continue?]
-    (loop [gen-n 1
-           world this]
-     (if (continue? world gen-n)
-       (recur (inc gen-n) (next-generation world))
-       world))))
+          (vec (concat m-results c-results s-results)))))))
