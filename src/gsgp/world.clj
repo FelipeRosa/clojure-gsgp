@@ -4,6 +4,9 @@
 
 
 (defprotocol World
+  "World protocol
+  next-generation generates a new world with the next generation of individuals
+  evolve-while computes generations until continue? is false"
   (next-generation [this])
   (evolve-while [this continue?]))
 
@@ -11,6 +14,7 @@
 
 
 (defn world-mutation
+  "Returns the mutation of an individual inside a world"
   [world i]
   (let [{mutation-f :mutation} (:language world)
         {input-set        :input-set
@@ -28,6 +32,7 @@
 
 
 (defn world-crossover
+  "Returns the crossover of two individuals inside a world"
   [world i1 i2]
   (let [{crossover-f :crossover} (:language world)
         {input-set        :input-set
@@ -47,14 +52,17 @@
     (->Individual i-program i-phenotype i-fitness)))
 
 (defn world-best-individual
+  "Returns a world's individual which has the highest fitness"
   [world]
   (apply max-key :fitness (-> world :population)))
 
 (defn world-average-fitness
+  "Returns the average fitness of a world's population"
   [world]
   (/ (reduce + (mapv :fitness (:population world))) (count (:population world))))
 
 (defn world-average-program-size
+  "Returns the average program size of a world's population"
   [world]
   (/ (reduce + (mapv #(:size (:program %)) (:population world))) (count (:population world))))
 
