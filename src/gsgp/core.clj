@@ -1,7 +1,8 @@
 (ns gsgp.core
   (:gen-class)
   (:require [gsgp.language.core :refer :all])
-  (:require [gsgp.world :refer :all])
+  (:require [gsgp.world.core :refer :all])
+  (:require [gsgp.world.seq :refer :all])
   (:require [gsgp.selection :refer :all])
   (:require [gsgp.data :refer :all])
   (:require [gsgp.statistics :refer :all]))
