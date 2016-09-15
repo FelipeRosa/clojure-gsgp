@@ -8,7 +8,7 @@
   The dataset's columns should be separated by whitespace."
   [file-name]
   (with-open [r (io/reader file-name)]
-    (mapv #(read-string (str "[" % "]")) (line-seq r))))
+    (mapv #(read-string (str "[" % "]")) (filter #(not (empty? %)) (line-seq r)))))
 
 (defn save-txt
   "Save a dataset to a .txt file.
