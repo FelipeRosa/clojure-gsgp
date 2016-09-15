@@ -30,7 +30,7 @@
 
 (defn funcall
   [f & f-args]
-  (->FunCall f (vec f-args) (+ 1 (reduce #(+ (:size %1) (:size %2)) f-args))))
+  (->FunCall f (vec f-args) (+ 1 (reduce + (mapv :size f-args)))))
 
 
 (defrecord ProgramNodeGenerator [name node-arity generator-function])
