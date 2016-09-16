@@ -3,6 +3,13 @@
   (:require [gsgp.statistics :refer [covariance variance]]))
 
 
+(defn- population-p-coeffiecient
+  [population]
+  (let [program-sizes     (mapv #(:size (:program %)) population)
+        program-fitnesses (mapv :fitness population)]
+    (/ (covariance program-sizes program-fitnesses) (+ 1 (variance program-sizes)))))
+
+
 (defrecord SeqWorld
   [population
    language
@@ -20,20 +27,19 @@
           {selection :selection-function
            population :population} this
 
-          program-sizes     (mapv #(:size (:program %)) population)
-          program-fitnesses (mapv :fitness population)
-          p-coefficient     (/ (covariance program-sizes program-fitnesses) (variance program-sizes))
-
+          p-coefficient     (population-p-coeffiecient population)
           select-individual #(selection population p-coefficient)
 
           p-size  (count population)
           m-count (* m-rate p-size)
           c-count (* c-rate p-size)
-          s-count (- p-size m-count c-count)
 
           m-results (mapv #(world-mutation this %) (take m-count (shuffle population)))
           c-results (vec (repeatedly c-count #(world-crossover this (select-individual) (select-individual))))
-          s-results (vec (repeatedly s-count select-individual))]
-      (update this :population
-        (constantly
-          (vec (concat m-results c-results s-results)))))))
+
+          intermediate-population    (vec (concat population m-results c-results))
+          intermediate-p-coefficient (population-p-coeffiecient intermediate-population)
+          select-next-individual #(selection intermediate-population intermediate-p-coefficient)
+
+          next-population (vec (repeatedly p-size #(select-next-individual)))]
+      (update this :population (constantly next-population)))))
