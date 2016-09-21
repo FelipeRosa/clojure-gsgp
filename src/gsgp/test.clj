@@ -33,9 +33,9 @@
   [(plus  [e1 e2] (funcall + e1 e2))
    (minus [e1 e2] (funcall - e1 e2))
    (times [e1 e2] (funcall * e1 e2))
-   (div   [e1 e2] (funcall safe-div e1 e2))
+   (div   [e1 e2] (funcall safe-div e1 e2))]
   ;  (log   [e1]    (funcall safe-log e1))
-   (sin   [e1]    (funcall #(Math/sin %) e1))]
+  ; (sin   [e1]    (funcall #(Math/sin %) e1))]
   ;  (cos   [e1]    (funcall #(Math/cos %) e1))
   ;  (exp   [e1]    (funcall safe-exp e1))]
 
@@ -74,15 +74,15 @@
                                         phenotype (mapv #(program->value prog %) training-input)
                                         fitness (fitness-fn phenotype)]
                                     (->Individual prog phenotype fitness)))
-                                (range 500)))
+                                (range 1000)))
           world (->SeqWorld initial-population
                             arith
                             fitness-fn
                             selection-fn
                             training-input
                             {:mutation-rate  0.4
-                             :crossover-rate 0.2})
-          results (take 20
+                             :crossover-rate 0.3})
+          results (take 100
                     (take-while #(do
                                    (println (:fitness (world-best-individual %)))
                                    true)
