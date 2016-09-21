@@ -1,5 +1,4 @@
-(ns gsgp.core
-  (:gen-class)
+(ns gsgp.test
   (:require [gsgp.language.core :refer :all])
   (:require [gsgp.world.core :refer :all])
   (:require [gsgp.world.seq :refer :all])
