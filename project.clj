@@ -1,4 +1,4 @@
-(defproject gsgp "0.1.1-SNAPSHOT"
+(defproject gsgp "0.1.0-SNAPSHOT"
   :description "Geometric Semantic Genetic Programming library"
   :url "https://github.com/FelipeRosa/clojure-gsgp"
   :license {:name "MIT"
